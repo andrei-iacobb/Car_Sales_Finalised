@@ -283,9 +283,18 @@ void buyCar() {
 // view all recorded sales data
 void viewSalesData() {
     sortSalesByTotalPriceDescending(); // sort sales by total price (highest first)
-    printf("\nSales Data:\n");
+    //checks to see there actually is some sales data
+    if (salesCount == 0) {
+        // if not it informs the user
+        printf("\nNo sales data available.\n");
+        return;
+    }
+
+    // if there is sales data its sorted by car model using this
+    printf("\nSales Data by Car Model:\n");
     for (int i = 0; i < salesCount; i++) {
-        printf("Customer: %s, Car: %s, Total Price: %.2f, Date: %s\n", sales[i].customerName, sales[i].carModel, sales[i].totalPrice, sales[i].date);
+        printf("Customer: %s, Car: %s, Total Price: %.2f, Date: %s\n",
+               sales[i].customerName, sales[i].carModel, sales[i].totalPrice, sales[i].date);
     }
 }
 
@@ -300,14 +309,25 @@ void leaveFeedback() {
         return;
     }
 
+    // this is so it can be associated to a car model
+    int carChoice;
+    //iterates through every car model
+    printf("\nAvailable Cars:\n");
+    for (int i = 0; i < MAX_CARS && strlen(cars[i].model) > 0; i++) {
+        printf("%d. %s \n", i + 1, cars[i].model, cars[i].year);
+    }
+    //takes the car choice
+    carChoice = getValidatedInt("To select a car to leave feedback enter a number: ", 1, MAX_CARS - 1);
+
     //takes feedback using max text length
     char feedback[MAX_TEXT_LENGTH];
     getValidatedString("Please enter a short feedback: ", feedback, MAX_TEXT_LENGTH);
     //writes to file then closes
-    fprintf(file, "%s\n", feedback);
+    fprintf(file, "Model: %s, Feedback: %s\n", cars[carChoice].model, feedback);
     fclose(file);
 
     printf("Thank you for your feedback!\n");
+    printf("The model selected was %s!\n", cars[carChoice].model);
 }
 
 // validate and get an integer input from the user
